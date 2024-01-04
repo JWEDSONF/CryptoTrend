@@ -7,7 +7,6 @@ from data_loader import load_data
 from table_formatters import colunas_dolar, colunas_percentual, dollar_formatter, percent_formatter
 import plotly.express as px
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode, JsCode
-from sklearn.preprocessing import MinMaxScaler
 
 st.set_page_config(layout="wide")
 st.title('Screener')
