@@ -3,3 +3,6 @@ pandas==1.5.3
 numpy==1.24.4
 plotly==5.16.1
 streamlit_aggrid
+aiohttp
+pandas_ta
+
