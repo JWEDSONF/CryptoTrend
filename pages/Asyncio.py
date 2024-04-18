@@ -1,9 +1,9 @@
-import asyncio
 import aiohttp
 import streamlit as st
+import asyncio
 
 async def get_binance_symbols(session):
-    url = 'https://api.binance.us/api/v3/exchangeInfo'
+    url = 'https://api.binance.com/api/v3/exchangeInfo'
     try:
         async with session.get(url) as response:
             # Verifica se a solicitação foi bem-sucedida (código de status 2xx)
@@ -26,7 +26,8 @@ async def get_binance_symbols(session):
     return []
 
 async def main():
-    async with aiohttp.ClientSession() as session:
+    proxy = "https://eu7.proxysite.com/process.php?d=oE6h%2B9sADhUQgaCSEuwI0rFSd%2F5CR0aehO4mWpUxQhl1m8Memqg2&b"
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False, proxy=proxy)) as session:
         symbols = await get_binance_symbols(session)
         if symbols:
             st.write(symbols)
