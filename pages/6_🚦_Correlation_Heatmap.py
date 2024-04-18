@@ -35,7 +35,7 @@ st.set_page_config(
 
 
 async def get_binance_symbols(session):
-    url = 'https://api.binance.com/api/v3/exchangeInfo'
+    url = 'https://api.binance.us/api/v3/exchangeInfo'
     try:
         async with session.get(url) as response:
             data = await response.json()
@@ -55,7 +55,7 @@ async def fetch_all(urls):
         return await asyncio.gather(*tasks)
 
 async def get_data(coin, interval, limit):
-    url = f"https://api.binance.com/api/v3/klines?symbol={coin}&interval={interval}&limit={limit}"
+    url = f"https://api.binance.us/api/v3/klines?symbol={coin}&interval={interval}&limit={limit}"
     async with aiohttp.ClientSession() as session:
         response = await fetch(session, url)
         df = pd.DataFrame(response)
