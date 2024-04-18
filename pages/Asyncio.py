@@ -27,7 +27,7 @@ async def get_binance_symbols(session):
 
 async def main():
     # Endereço do proxy
-    proxy_url = "https://eu7.proxysite.com/process.php?d=oE6h%2B9sADhUQgaCSEuwI0rFSd%2F5CR0aehO4mWpUxQhl1m8Memqg2&b=1&f=norefer"
+    proxy_url = "https://de.hideproxy.me/go.php?u=16eHB1ohllrWmAzKs9ioKJBq%2F6l7FrHVFSji9V0jfJ3ZfZ55uiYh&b=5&f=norefer"
     
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.binance.com/api/v3/exchangeInfo', proxy=proxy_url) as response:
