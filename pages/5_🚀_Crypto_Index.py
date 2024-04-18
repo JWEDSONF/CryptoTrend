@@ -58,28 +58,59 @@ async def get_binance_symbols(session):
         st.error(f"Erro ao buscar símbolos: {e}")
         return []
 
+# async def fetch_data(session, symbol, interval):
+#     url = 'https://api.binance.com/api/v3/klines'
+#     params = {'symbol': symbol, 'interval': interval, 'limit': 1000}
+#     async with session.get(url, params=params) as response:
+#         if response.status == 200:
+#             data = await response.json()
+#             df = pd.DataFrame(data)
+#             df.columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore']
+#             df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
+#             df.set_index('Open time', inplace=True)
+#             df['Close'] = df['Close'].astype(float)
+#             df['Volume'] = df['Volume'].astype(float)
+#             df['Number of trades'] = df['Number of trades'].astype(float)
+#             df['Taker buy quote asset volume'] = df['Taker buy quote asset volume'].astype(float)
+#             # Calcula CVD
+#             df['Volume_Delta'] = df['Taker buy quote asset volume'] - (df['Quote asset volume'].astype(float) - df['Taker buy quote asset volume'])
+#             df['CVD'] = df['Volume_Delta'].cumsum()
+#             #df['CVD'] = (df['Taker buy quote asset volume'] - df['Quote asset volume'].astype(float) + df['Taker buy quote asset volume']).cumsum()
+#             df = df.sort_index()  # Ordena pelo índice
+#             return df[['Close', 'Volume', 'CVD','Number of trades', 'Volume_Delta' ]]
+#         else:
+#             return pd.DataFrame()
+
 async def fetch_data(session, symbol, interval):
     url = 'https://api.binance.com/api/v3/klines'
     params = {'symbol': symbol, 'interval': interval, 'limit': 1000}
-    async with session.get(url, params=params) as response:
-        if response.status == 200:
-            data = await response.json()
-            df = pd.DataFrame(data)
-            df.columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore']
-            df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
-            df.set_index('Open time', inplace=True)
-            df['Close'] = df['Close'].astype(float)
-            df['Volume'] = df['Volume'].astype(float)
-            df['Number of trades'] = df['Number of trades'].astype(float)
-            df['Taker buy quote asset volume'] = df['Taker buy quote asset volume'].astype(float)
-            # Calcula CVD
-            df['Volume_Delta'] = df['Taker buy quote asset volume'] - (df['Quote asset volume'].astype(float) - df['Taker buy quote asset volume'])
-            df['CVD'] = df['Volume_Delta'].cumsum()
-            #df['CVD'] = (df['Taker buy quote asset volume'] - df['Quote asset volume'].astype(float) + df['Taker buy quote asset volume']).cumsum()
-            df = df.sort_index()  # Ordena pelo índice
-            return df[['Close', 'Volume', 'CVD','Number of trades', 'Volume_Delta' ]]
-        else:
-            return pd.DataFrame()
+    try:
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                data = await response.json()
+                df = pd.DataFrame(data)
+                df.columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore']
+                df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
+                df.set_index('Open time', inplace=True)
+                df['Close'] = df['Close'].astype(float)
+                df['Volume'] = df['Volume'].astype(float)
+                df['Number of trades'] = df['Number of trades'].astype(float)
+                df['Taker buy quote asset volume'] = df['Taker buy quote asset volume'].astype(float)
+                # Calcula CVD
+                df['Volume_Delta'] = df['Taker buy quote asset volume'] - (df['Quote asset volume'].astype(float) - df['Taker buy quote asset volume'])
+                df['CVD'] = df['Volume_Delta'].cumsum()
+                df = df.sort_index()  # Ordena pelo índice
+                return df[['Close', 'Volume', 'CVD','Number of trades', 'Volume_Delta' ]]
+            else:
+                st.error(f"Erro ao fazer solicitação HTTP: {response.status}")
+                return pd.DataFrame()
+    except aiohttp.ClientError as ce:
+        st.error(f"Erro de cliente ao fazer solicitação HTTP: {ce}")
+        return pd.DataFrame()
+    except Exception as e:
+        st.error(f"Erro ao buscar dados: {e}")
+        return pd.DataFrame()
+
 
 
 
