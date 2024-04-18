@@ -20,17 +20,18 @@ def load_data():
     df_final['Rank'] = df_final['Market Cap'].rank(ascending=False)
 
     mapeamento_preenchimento = {
-        'price2h': 'priceChangeH2',
-        'price1h': 'priceChangeH1',
-        'price5min': 'priceChangeM5',
-        'price24h': 'priceChangeH24',
-        'price4h': 'priceChangeH4',
-        'price_usd': 'price',
-        'price15min': 'priceChangeM15',
+        'Price 5m': 'price5min',
+        'Price 15m': 'price15min',
+        'Price 1h': 'price1h',
+        'Price 2h': 'price2h',
+        'Price 4h': 'price4h',
+        'Price 24h': 'price24h',          
+        'price_usd': 'price',        
         'Volume 24h': 'volume24h',
         #'marketCap': 'marketcap',
-        'baseCoin': 'qc_key'
+        #'qc_key': 'qc_key'
     }
+
 
     for coluna, substituto in mapeamento_preenchimento.items():
         df_final[coluna] = df_final[coluna].fillna(df_final[substituto])
@@ -41,27 +42,33 @@ def load_data():
         axis=1
     )
     
-    df_final['priceUSD'] = np.where(
+    df_final['Price USD'] = np.where(
         df_final['price'].notna(), 
         df_final['price'], 
         df_final['price_usd']
     )
-    df_final['OI/Market Cap'] = (df_final['Open Interest']/ df_final['marketcap'])*100
-    df_final['OI/Volume24h'] = (df_final['Open Interest']/ df_final['Volume 24h'])*100
+    df_final['OI/Market Cap'] = (df_final['Open Interest']/ df_final['marketcap'])
+    df_final['Volume24h/OI'] = (df_final['Volume 24h']/df_final['Open Interest'])
+    df_final['Volume24h/Market Cap'] = (df_final['Volume 24h']/df_final['Market Cap'])
+    #df_final['Trades 24h'] = df_final['Buy Trades 24h'] + df_final['Sell Trades 24h']
     df_final['Liquidations 24h/OI'] = (df_final['Liquidation 24h']/ df_final['Open Interest'])*100
-    df_final['Long Liquidations/OI'] = (df_final['Liquidation Long 24h']/ df_final['Open Interest'])*100
-    df_final['Short Liquidations/OI'] = (df_final['Liquidation Short 24h']/ df_final['Open Interest'])*100
+    df_final['Long Liquidations/OI'] = (df_final['Long Liquidation 24h']/ df_final['Open Interest'])*100
+    df_final['Short Liquidations/OI'] = (df_final['Short Liquidation 24h']/ df_final['Open Interest'])*100
     df_final['Short-Term OI Trend'] = (df_final['Open Interest 5m'] + df_final['Open Interest 15m'] + df_final['Open Interest 30m'] + df_final['Open Interest 1h'])/4
     df_final['Long-Term OI Trend'] = (df_final['Open Interest 4h'] + df_final['Open Interest 24h'] + df_final['Open Interest 2d'] + df_final['Open Interest 3d']+ df_final['Open Interest 7d'])/5
     df_final['Top Trader Sentiment'] = (df_final['Top Trader LSR Position']+ df_final['Top Trader LSR Account'])/2
     df_final['Funding Rate Risk'] = df_final['Funding Rate']*10000 * df_final['Top Trader Sentiment']
     df_final['Short-Term RSI Trend'] = (df_final['rsi5min'] + df_final['rsi15min'] + df_final['rsi30min'] + df_final['rsi1h'])/4
+    df_final['Long-Term RSI Trend'] = (df_final['rsi4h'] + df_final['rsi24h'])/2
     df_final['Coin'] = df_final.apply(
         lambda row: f'<img src="{row.coinImage}" width="25" height="auto"> {row.baseCoin}' 
                     if (not pd.isna(row['coinImage']) and row['coinImage'] != '' and not pd.isna(row['baseCoin']) and row['baseCoin'].strip() != '')
                     else f'<img src="https://github.com/Pymmdrza/Cryptocurrency_Logos/blob/mainx/PNG/{row.qc_key.lower()}.png?raw=true" width="25" height="auto"> {row.qc_key}',
         axis=1
     )
+
+    colunas_para_remover = ['marketCapChange24H', 'marketCapChangeValue24H','show','follow','lsRatioCh24','buyTradeTurnover','sellTradeTurnover','price5min','price15min','price1h','price2h','price4h','price24h','volume24h','marketcap','marketCap','price','price_usd','qc_key','baseCoin']
+    df_final = df_final.drop(columns=colunas_para_remover, errors='ignore')
     
     return df_final
 

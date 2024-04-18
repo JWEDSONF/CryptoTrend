@@ -1,21 +1,32 @@
 import pandas as pd
 
+
 colunas_renomear = {
+    'priceChangeM5': 'Price 5m',
+    'priceChangeM15': 'Price 15m',
+    'priceChangeM30': 'Price 30m',
+    'priceChangeH1': 'Price 1h',
+    'priceChangeH2': 'Price 2h',
+    'priceChangeH4': 'Price 4h',
+    'priceChangeH6': 'Price 6h',
+    'priceChangeH8': 'Price 8h',
+    'priceChangeH12': 'Price 12h',
+    'priceChangeH24': 'Price 24h',
     'openInterest': 'Open Interest',
     'liquidationH1': 'Liquidation 1h',
-    'liquidationH1Long': 'Liquidation Long 1h',
-    'liquidationH1Short': 'Liquidation Short 1h',
+    'liquidationH1Long': 'Long Liquidation 1h',
+    'liquidationH1Short': 'Short Liquidation 1h',
     'liquidationH4': 'Liquidation 4h',
-    'liquidationH4Long': 'Liquidation Long 4h',
-    'liquidationH4Short': 'Liquidation Short 4h',
+    'liquidationH4Long': 'Long Liquidation 4h',
+    'liquidationH4Short': 'Short Liquidation 4h',
     'liquidationH12': 'Liquidation 12h',
-    'liquidationH12Long': 'Liquidation Long 12h',
-    'liquidationH12Short': 'Liquidation Short 12h',
+    'liquidationH12Long': 'Long Liquidation 12h',
+    'liquidationH12Short': 'Short Liquidation 12h',
     'liquidationH24': 'Liquidation 24h',
-    'liquidationH24Long': 'Liquidation Long 24h',
-    'liquidationH24Short': 'Liquidation Short 24h',
-    'buyTradeTurnover': 'Buy Trades 24h',
-    'sellTradeTurnover': 'Sell Trades 24h',
+    'liquidationH24Long': 'Long Liquidation 24h',
+    'liquidationH24Short': 'Short Liquidation 24h',
+    # 'buyTradeTurnover': 'Buy Trades 24h',
+    # 'sellTradeTurnover': 'Sell Trades 24h',
     'buy24h': 'Buy Volume 24h',
     'sell24h': 'Sell Volume 24h',
     'buy12h': 'Buy Volume 12h',
@@ -61,6 +72,7 @@ colunas_renomear = {
     'turnoverChg24h': 'Volume Change 24h'
 }
 
+
 def processar_dados(instrument_list):
     df_instr = pd.DataFrame(instrument_list)
     df_instr.rename(columns=colunas_renomear, inplace=True)
@@ -92,9 +104,13 @@ def processar_dados(instrument_list):
     df_agregado[colunas_numericas] = df_instr.groupby('baseCoin')[colunas_numericas].first()
     df_agregado[colunas_texto] = df_instr.groupby('baseCoin')[colunas_texto].first()
     df_agregado['price'] = df_instr.groupby('baseCoin')['price'].first()
-    df_agregado['symbol'] = df_agregado['symbol'].str.replace(r'-SWAP$', '').str.replace(r'-', '')
-
-
+    #df_agregado['symbol'] = df_agregado['symbol'].str.replace(r'-SWAP$', '').str.replace(r'-', '')
+    df_agregado['symbol'] = (df_agregado['symbol']
+                             .str.replace(r'-SWAP$', '', regex=True)
+                             .str.replace(r'SWAP$', '', regex=True)
+                             .str.replace('-', '')
+                             .str.replace('_', ''))
 
     df_agregado.reset_index(inplace=True, drop=True)
     return df_agregado
+
