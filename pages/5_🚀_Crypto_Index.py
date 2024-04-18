@@ -512,15 +512,18 @@ async def main():
                 #     st.write(f"Este índice é composto por {', '.join(indices[st.session_state.selected_category])}")
 
 
-
 if __name__ == "__main__":
     asyncio.run(main())
 
     # Inicialize o estado da sessão
+    if 'selected_category' not in st.session_state:
+        st.session_state.selected_category = None
+    
+    # Verifique se o selected_category foi inicializado corretamente
     if st.session_state.selected_category:
         category_name = st.session_state.selected_category
-        cryptocurrencies = ', '.join([crypto.replace("USDT", "") for crypto in indices[category_name]])
-        st.write(f"{category_name} is an index composed of {len(indices[category_name])} cryptocurrencies - {cryptocurrencies}")
+        cryptocurrencies = ', '.join([crypto.replace("USDT", "") for c in category_name])
+        st.write(f"{category_name} is an index composed of {len(index_data)} cryptocurrencies: {cryptocurrencies}")
 
 hide_streamlit_style = """
             <style>
