@@ -2,7 +2,6 @@ import asyncio
 import aiohttp
 import streamlit as st
 
-
 async def get_binance_symbols(session):
     url = 'https://api.binance.com/api/v3/exchangeInfo'
     try:
@@ -37,10 +36,10 @@ async def get_binance_symbols(session):
     # Retorna uma lista vazia se ocorrer um erro
     return []
 
-# Exemplo de uso:
-async with aiohttp.ClientSession() as session:
-    symbols = await get_binance_symbols(session)
-    print(symbols)
+async def main():
+    async with aiohttp.ClientSession() as session:
+        symbols = await get_binance_symbols(session)
+        print(symbols)
 
 # Para executar a função principal
 if __name__ == "__main__":
