@@ -27,17 +27,15 @@ async def get_binance_symbols(session):
 
 async def main():
     # Endereço do proxy
-    proxy = "https://eu7.proxysite.com/process.php?d=oE6h%2B9sADhUQgaCSEuwI0rFSd%2F5CR0aehO4mWpUxQhl1m8Memqg2&b=1&f=norefer"
+    proxy_url = "https://eu7.proxysite.com/process.php?d=oE6h%2B9sADhUQgaCSEuwI0rFSd%2F5CR0aehO4mWpUxQhl1m8Memqg2&b=1&f=norefer"
     
-    # Configuração do conector do proxy
-    connector = aiohttp.TCPConnector(ssl=False, proxy=proxy)
-    
-    async with aiohttp.ClientSession(connector=connector) as session:
-        symbols = await get_binance_symbols(session)
-        if symbols:
-            st.write(symbols)
-        else:
-            st.error("Nenhum símbolo encontrado.")
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://api.binance.com/api/v3/exchangeInfo', proxy=proxy_url) as response:
+            symbols = await get_binance_symbols(session)
+            if symbols:
+                st.write(symbols)
+            else:
+                st.error("Nenhum símbolo encontrado.")
 
 # Para executar a função principal
 if __name__ == "__main__":
