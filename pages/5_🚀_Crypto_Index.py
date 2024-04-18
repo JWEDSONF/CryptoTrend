@@ -114,7 +114,7 @@ def calcular_sharpe_ratio(df, timeperiod):
 
 async def main():
     st.title('Crypto Index Dashboard')
-    st.subheader('Explore cryptocurrency categories, evaluate performance, and compare with any cryptocurrency', divider='rainbow')
+    #st.subheader('Explore cryptocurrency categories, evaluate performance, and compare with any cryptocurrency', divider='rainbow')
 
     async with ClientSession() as session:
         symbols = await get_binance_symbols(session)
