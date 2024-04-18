@@ -30,7 +30,7 @@ async def main():
     proxy = "https://eu7.proxysite.com/process.php?d=oE6h%2B9sADhUQgaCSEuwI0rFSd%2F5CR0aehO4mWpUxQhl1m8Memqg2&b=1&f=norefer"
     
     # Configuração do conector do proxy
-    connector = aiohttp.connector.ProxyConnector(proxy=proxy)
+    connector = aiohttp.TCPConnector(ssl=False, proxy=proxy)
     
     async with aiohttp.ClientSession(connector=connector) as session:
         symbols = await get_binance_symbols(session)
@@ -38,9 +38,6 @@ async def main():
             st.write(symbols)
         else:
             st.error("Nenhum símbolo encontrado.")
-
-
-
 
 # Para executar a função principal
 if __name__ == "__main__":
