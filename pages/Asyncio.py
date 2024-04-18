@@ -28,10 +28,10 @@ async def get_binance_symbols(session):
                 pass
     except aiohttp.ClientError as e:
         # Se ocorrer um erro ao fazer a solicitação (por exemplo, conexão perdida)
-        print(f"Erro de cliente ao buscar símbolos: {e}")
+        st.error(f"Erro de cliente ao buscar símbolos: {e}")
     except Exception as e:
         # Se ocorrer um erro inesperado
-        print(f"Erro inesperado ao buscar símbolos: {e}")
+        st.error(f"Erro inesperado ao buscar símbolos: {e}")
 
     # Retorna uma lista vazia se ocorrer um erro
     return []
@@ -39,7 +39,7 @@ async def get_binance_symbols(session):
 async def main():
     async with aiohttp.ClientSession() as session:
         symbols = await get_binance_symbols(session)
-        print(symbols)
+        st.write(symbols)
 
 # Para executar a função principal
 if __name__ == "__main__":
