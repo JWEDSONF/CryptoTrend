@@ -1,12 +1,11 @@
 import aiohttp
-import streamlit as st
 import asyncio
+import streamlit as st
 
 async def get_binance_symbols(session):
     url = 'https://api.binance.com/api/v3/exchangeInfo'
     try:
         async with session.get(url) as response:
-            # Verifica se a solicitação foi bem-sucedida (código de status 2xx)
             if response.status == 200:
                 data = await response.json()
                 symbols = [s['symbol'] for s in data['symbols'] if s['status'] == 'TRADING']
@@ -16,19 +15,15 @@ async def get_binance_symbols(session):
             else:
                 st.error(f"Erro ao buscar símbolos: Código de status {response.status}")
     except aiohttp.ClientError as e:
-        # Se ocorrer um erro ao fazer a solicitação (por exemplo, conexão perdida)
         st.error(f"Erro de cliente ao buscar símbolos: {e}")
     except Exception as e:
-        # Se ocorrer um erro inesperado
         st.error(f"Erro inesperado ao buscar símbolos: {e}")
-
-    # Retorna uma lista vazia se ocorrer um erro
     return []
 
 async def main():
     # Endereço do proxy
     proxy_url = "https://de.hideproxy.me/go.php?u=16eHB1ohllrWmAzKs9ioKJBq%2F6l7FrHVFSji9V0jfJ3ZfZ55uiYh&b=5&f=norefer"
-    
+
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.binance.com/api/v3/exchangeInfo', proxy=proxy_url) as response:
             symbols = await get_binance_symbols(session)
@@ -37,6 +32,6 @@ async def main():
             else:
                 st.error("Nenhum símbolo encontrado.")
 
-# Para executar a função principal
+# Executa o loop de eventos do asyncio
 if __name__ == "__main__":
     asyncio.run(main())
