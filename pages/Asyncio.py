@@ -3,7 +3,7 @@ import aiohttp
 import streamlit as st
 
 async def get_binance_symbols(session):
-    url = 'https://api.binance.com/api/v3/exchangeInfo'
+    url = 'https://api.binance.us/api/v3/exchangeInfo'
     try:
         async with session.get(url) as response:
             # Verifica se a solicitação foi bem-sucedida (código de status 2xx)
@@ -11,6 +11,8 @@ async def get_binance_symbols(session):
                 data = await response.json()
                 symbols = [s['symbol'] for s in data['symbols'] if s['status'] == 'TRADING']
                 return symbols
+            elif response.status == 451:
+                st.error("Acesso ao recurso indisponível por motivos legais.")
             else:
                 st.error(f"Erro ao buscar símbolos: Código de status {response.status}")
     except aiohttp.ClientError as e:
