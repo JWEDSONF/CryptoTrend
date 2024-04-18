@@ -11,21 +11,8 @@ async def get_binance_symbols(session):
                 data = await response.json()
                 symbols = [s['symbol'] for s in data['symbols'] if s['status'] == 'TRADING']
                 return symbols
-            # Se a resposta for redirecionada (código de status 3xx), pode ser tratado aqui
-            elif response.status == 301:
-                # Lógica para lidar com redirecionamento
-                pass
-            # Se a resposta for um erro do cliente (código de status 4xx)
-            elif response.status == 404:
-                # Lógica para lidar com erro do cliente (por exemplo, recurso não encontrado)
-                pass
-            # Se a resposta for um erro do servidor (código de status 5xx)
-            elif response.status == 500:
-                # Lógica para lidar com erro do servidor
-                pass
             else:
-                # Lógica para lidar com outros códigos de status
-                pass
+                st.error(f"Erro ao buscar símbolos: Código de status {response.status}")
     except aiohttp.ClientError as e:
         # Se ocorrer um erro ao fazer a solicitação (por exemplo, conexão perdida)
         st.error(f"Erro de cliente ao buscar símbolos: {e}")
@@ -39,7 +26,10 @@ async def get_binance_symbols(session):
 async def main():
     async with aiohttp.ClientSession() as session:
         symbols = await get_binance_symbols(session)
-        st.write(symbols)
+        if symbols:
+            st.write(symbols)
+        else:
+            st.error("Nenhum símbolo encontrado.")
 
 # Para executar a função principal
 if __name__ == "__main__":
