@@ -69,7 +69,7 @@ async def get_data(coin, interval, limit):
 
 async def main():
     st.title("Correlation Heatmap")
-    st.subheader('', divider='rainbow')
+    #st.subheader('', divider='rainbow')
 
     async with aiohttp.ClientSession() as session:
         symbols = await get_binance_symbols(session)
